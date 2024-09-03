@@ -1,0 +1,36 @@
+{
+  "name": "yt-video-downloader",
+  "version": "1.0.0",
+  "description": "A nodejs server that helps for using downloading youtube videos using ytdl-core package.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jafeershaik5/yt-video-downloader/server"
+  },
+  "keywords": [
+    "youtube",
+    "nodejs",
+    "expressjs",
+    "reactjs"
+  ],
+  "author": "Jafeer Shaik",
+  "license": "ISC",
+  "dependencies": {
+    "@distube/ytdl-core": "^4.14.4",
+    "axios": "^1.7.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "insta-dl": "^1.1.2",
+    "nayan-media-downloader": "^2.4.8",
+    "uuid": "^10.0.0",
+    "ytdl-core": "^4.11.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
