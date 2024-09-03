@@ -21,7 +21,7 @@ function Youtube() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `https://video-loot-api.vercel.app/ytdl?url=${fetchUrl}`,
+          `https://video-loot.vercel.app/ytdl?url=${fetchUrl}`,
         );
         return response.data;
       } catch (err) {
