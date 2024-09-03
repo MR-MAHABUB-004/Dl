@@ -13,6 +13,9 @@ app.use(cors({
     credentials: true // Allow credentials
 }));
 
+app.get('/', (req, res) => {
+    res.json('VideoLoot - Online Media Downloader')
+})
 
 app.get("/ytdl", async (req, res) => {
     try {

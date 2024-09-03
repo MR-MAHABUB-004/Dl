@@ -21,7 +21,7 @@ function Youtube() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `http://localhost:4000/ytdl?url=${fetchUrl}`,
+          `https://video-loot-api.vercel.app/ytdl?url=${fetchUrl}`,
         );
         return response.data;
       } catch (err) {
@@ -33,7 +33,7 @@ function Youtube() {
     staleTime: Infinity,
   });
 
-  const handleGetFormats = () => {
+  const fetchVideo = () => {
     setMessage("");
     if (!inputUrl) {
       setMessage("URL Not Specified.");
@@ -78,7 +78,7 @@ function Youtube() {
   return (
     <div className="relative flex flex-col items-center justify-center">
       <div className="my-12">
-        <h1 className="text-xl font-bold sm:text-3xl xs:text-2xl">
+        <h1 className="text-xl font-bold xs:text-2xl sm:text-3xl">
           YouTube Video Downloader
         </h1>
       </div>
@@ -88,10 +88,10 @@ function Youtube() {
           value={inputUrl}
           onChange={(e) => setInputUrl(e.target.value)}
           placeholder="Paste Your YouTube URL Here"
-          className="w-[12rem] border-2 border-gray-500 px-4 py-2 placeholder:text-sm focus:shadow-lg sm:w-[18rem] md:w-[22rem] xs:w-[16rem]"
+          className="w-[12rem] border-2 border-gray-500 px-4 py-2 placeholder:text-sm focus:shadow-lg xs:w-[16rem] sm:w-[18rem] md:w-[22rem]"
         />
         <button
-          onClick={handleGetFormats}
+          onClick={fetchVideo}
           className="border-2 border-l-0 border-gray-500 px-4 py-2"
         >
           Get Video
@@ -110,7 +110,7 @@ function Youtube() {
 
       {data && (
         <iframe
-          className="h-[157px] w-[280px] rounded-md sm:h-[225px] sm:w-[400px] md:h-[285px] md:w-[500px] xs:h-[180px] xs:w-[320px]"
+          className="h-[157px] w-[280px] rounded-md xs:h-[180px] xs:w-[320px] sm:h-[225px] sm:w-[400px] md:h-[285px] md:w-[500px]"
           src={`${data.url}`}
           title="video"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -142,7 +142,7 @@ function Youtube() {
           {selectedFormat && (
             <button
               onClick={() => handleDownload(selectedFormat)}
-              className="transistion-all cursor-pointer rounded-lg border-2 border-gray-300 bg-gradient-to-br from-[#020024] from-10% via-[#090979] via-30% to-[#00d4ff] to-100% bg-clip-text px-4 py-2 font-bold tracking-wide text-transparent duration-300 ease-in-out hover:z-10 hover:shadow-md"
+              className="download-btn"
             >
               Download
             </button>

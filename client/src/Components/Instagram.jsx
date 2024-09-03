@@ -2,11 +2,13 @@ import { useState } from "react";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import Marquee from "react-fast-marquee";
+import ProgressBar from "./ProgressBar"; // Import the ProgressBar component
 
 function Instagram() {
   const [inputUrl, setInputUrl] = useState("");
   const [fetchUrl, setFetchUrl] = useState(null);
   const [message, setMessage] = useState("");
+  const [progressMap, setProgressMap] = useState({}); // Track progress for each post
 
   // Function to validate Instagram URL
   const isValidUrl = (url) => {
@@ -15,39 +17,49 @@ function Instagram() {
     return regex.test(url);
   };
 
-  // Query to fetch Instagram video using TanStack Query
+  // Query to fetch Instagram media using TanStack Query
   const { data, error, isLoading, isFetching, refetch } = useQuery({
-    queryKey: ["instaVideo", fetchUrl],
+    queryKey: ["instaMedia", fetchUrl],
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `http://localhost:4000/instadl?url=${fetchUrl}`,
+          `https://video-loot-api.vercel.app/instadl?url=${fetchUrl}`,
         );
-        if (response.data.message) {
-          setMessage(response.data.message);
-        }
         return response.data;
       } catch (err) {
-        if (err.response && err.response.status === 403) {
-          setMessage(
-            "Unfortunately, we cannot download videos from a user's personal pages.",
-          );
-        } else {
-          setMessage("An error occurred while fetching data.");
-        }
         throw err;
       }
     },
     enabled: !!fetchUrl && isValidUrl(fetchUrl),
     staleTime: Infinity,
+    onSuccess: (data) => {
+      // Handle success
+      if (data.message) {
+        setMessage(data.message);
+      } else {
+        setMessage(""); // Clear message on successful fetch
+      }
+    },
+    onError: (err) => {
+      // Handle error
+      if (err.response && err.response.status === 403) {
+        setMessage(
+          "Unfortunately, we cannot download videos from a user's personal pages.",
+        );
+      } else {
+        setMessage("An error occurred while fetching data.");
+      }
+    },
     onSettled: () => {
       // Clear the message on successful fetch or error
-      setMessage("");
+      if (!isLoading && !isFetching) {
+        setMessage("");
+      }
     },
   });
 
-  const handleGetVideo = () => {
-    setMessage("");
+  const fetchMedia = () => {
+    setMessage(""); // Clear message before fetching new data
     if (!inputUrl) {
       setMessage("URL Not Specified.");
       return;
@@ -63,12 +75,16 @@ function Instagram() {
   };
 
   const handleDownload = async (
+    index,
     thumbnailUrl,
     url,
     contentType,
     fileExtension,
   ) => {
     try {
+      // Initialize progress for this post
+      setProgressMap((prev) => ({ ...prev, [index]: 0 }));
+
       // Determine which URL to use based on content type
       const downloadUrl = contentType.startsWith("image/") ? thumbnailUrl : url;
 
@@ -77,6 +93,10 @@ function Instagram() {
         url: downloadUrl,
         method: "GET",
         responseType: "blob",
+        onDownloadProgress: (event) => {
+          const percentage = Math.round((event.loaded * 100) / event.total);
+          setProgressMap((prev) => ({ ...prev, [index]: percentage }));
+        },
       });
 
       // Create a URL for the downloaded blob
@@ -92,8 +112,12 @@ function Instagram() {
       link.click();
       link.remove();
 
-      // Revoke the object URL after the download
-      window.URL.revokeObjectURL(blobUrl);
+      // Set progress to 100% and then clear after 2 seconds
+      setProgressMap((prev) => ({ ...prev, [index]: 100 }));
+      setTimeout(
+        () => setProgressMap((prev) => ({ ...prev, [index]: 0 })),
+        2000,
+      );
     } catch (error) {
       console.error("Error during download:", error);
     }
@@ -113,7 +137,7 @@ function Instagram() {
         </Marquee>
       </div>
       <div className="my-12">
-        <h1 className="text-xl font-bold sm:text-3xl xs:text-2xl">
+        <h1 className="text-xl font-bold xs:text-2xl sm:text-3xl">
           Instagram Content Downloader
         </h1>
       </div>
@@ -123,10 +147,10 @@ function Instagram() {
           value={inputUrl}
           onChange={(e) => setInputUrl(e.target.value)}
           placeholder="Paste Instagram URL"
-          className="w-[12rem] border-2 border-gray-500 px-4 py-2 placeholder:text-sm focus:shadow-lg sm:w-[18rem] md:w-[22rem] xs:w-[16rem]"
+          className="w-[12rem] border-2 border-gray-500 px-4 py-2 placeholder:text-sm focus:shadow-lg xs:w-[16rem] sm:w-[18rem] md:w-[22rem]"
         />
         <button
-          onClick={handleGetVideo}
+          onClick={fetchMedia}
           className="border-2 border-l-0 border-gray-500 px-4 py-2"
         >
           Fetch Media
@@ -144,26 +168,34 @@ function Instagram() {
             return (
               <div
                 key={index}
-                className="flex max-w-xs flex-col items-center md:max-w-sm lg:max-w-md lg:flex-row lg:gap-x-8"
+                className="flex max-w-xs flex-col items-center xs:max-w-[70%] md:max-w-sm lg:max-w-md"
               >
-                <img
-                  src={item.thumbnail}
-                  alt={`image-${index}`}
-                  className="h-auto max-h-[300px] w-full rounded-lg object-cover shadow-md"
-                />
-                <button
-                  onClick={() =>
-                    handleDownload(
-                      item.thumbnail,
-                      item.url,
-                      item.contentType,
-                      item.fileExtension,
-                    )
-                  }
-                  className="mt-4 cursor-pointer rounded-lg border-2 border-gray-300 bg-gradient-to-br from-[#020024] from-10% via-[#090979] via-30% to-[#00d4ff] to-100% bg-clip-text px-4 py-2 font-bold tracking-wide text-transparent transition-all duration-300 ease-in-out hover:z-10 hover:shadow-md"
-                >
-                  Download
-                </button>
+                <div className="flex flex-col">
+                  <img
+                    src={item.thumbnail}
+                    alt={`image-${index}`}
+                    className="h-auto max-h-[300px] w-full rounded-lg object-cover shadow-md"
+                  />
+                  <button
+                    onClick={() =>
+                      handleDownload(
+                        index,
+                        item.thumbnail,
+                        item.url,
+                        item.contentType,
+                        item.fileExtension,
+                      )
+                    }
+                    className="download-btn"
+                  >
+                    Download
+                  </button>
+                </div>
+                <div className="w-full">
+                  {progressMap[index] > 0 && (
+                    <ProgressBar progress={progressMap[index]} />
+                  )}
+                </div>
               </div>
             );
           })}

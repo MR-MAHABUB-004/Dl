@@ -1,1 +1,1 @@
-# yt-video-downloader
+# Video Loot - Online Video Downloader.
