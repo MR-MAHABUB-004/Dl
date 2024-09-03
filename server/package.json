@@ -25,9 +25,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "insta-dl": "^1.1.2",
     "nayan-media-downloader": "^2.4.8",
-    "uuid": "^10.0.0",
     "ytdl-core": "^4.11.5"
   },
   "devDependencies": {
