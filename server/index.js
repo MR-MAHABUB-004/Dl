@@ -5,25 +5,36 @@ const cors = require('cors');
 require("dotenv").config();
 const axios = require('axios');
 const { filterUniqueImages, filterFormats } = require('./helperFns');
+const rateLimit = require('express-rate-limit');
+const pRetry = require('p-retry');
 
 const port = process.env.PORT || 4000;
 const app = express();
 
-// CORS configuration
+// Apply rate limiting
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100 // limit each IP to 100 requests per windowMs
+});
+
+app.use(limiter);
 app.use(cors({
-    origin: function (origin, callback) {
-        const allowedOrigins = [
-            'http://localhost:5173',
-            'https://videoloot.vercel.app'
-        ];
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    credentials: true // Allow credentials
+    origin: ['http://localhost:5173', 'https://videoloot.vercel.app'],
+    credentials: true
 }));
+
+const fetchYouTubeInfo = async (url) => {
+    return pRetry(() => {
+        return ytdl.getInfo(url);
+    }, {
+        retries: 5,
+        minTimeout: 1000,
+        maxTimeout: 5000,
+        onFailedAttempt: error => {
+            console.warn(`Attempt ${error.attemptNumber} failed. There are ${error.retriesLeft} retries left.`);
+        }
+    });
+};
 
 app.get('/', (req, res) => {
     res.json('VideoLoot - Online Media Downloader');
@@ -37,7 +48,7 @@ app.get("/ytdl", async (req, res) => {
         }
 
         const videoId = await ytdl.getURLVideoID(url);
-        const metaInfo = await ytdl.getInfo(url);
+        const metaInfo = await fetchYouTubeInfo(url);
 
         if (!metaInfo || !metaInfo.formats) {
             throw new Error("Failed to retrieve video formats");
