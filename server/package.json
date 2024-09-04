@@ -2,11 +2,10 @@
   "name": "VideoLoot-online-media-downloader",
   "version": "1.0.0",
   "description": "A nodejs server that helps for using downloading youtube videos using ytdl-core package.",
-  "main": "index.mjs",
-  "type": "module",
+  "main": "index.js",
   "scripts": {
-    "start": "node index.mjs",
-    "dev": "nodemon index.mjs"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -26,10 +25,8 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "express-rate-limit": "^7.4.0",
     "got": "^11.8.3",
     "nayan-media-downloader": "^2.4.8",
-    "p-retry": "^6.2.0",
     "ytdl-core": "^4.11.5"
   },
   "devDependencies": {
