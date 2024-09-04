@@ -3,19 +3,31 @@ const ytdl = require('@distube/ytdl-core');
 const { ndown } = require("nayan-media-downloader");
 const cors = require('cors');
 require("dotenv").config();
-const axios = require('axios')
+const axios = require('axios');
 const { filterUniqueImages, filterFormats } = require('./helperFns');
 
 const port = process.env.PORT || 4000;
 const app = express();
+
+// CORS configuration
 app.use(cors({
-    origin: 'http://localhost:5173/',
+    origin: function (origin, callback) {
+        const allowedOrigins = [
+            'http://localhost:5173',
+            'https://videoloot.vercel.app'
+        ];
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true // Allow credentials
 }));
 
 app.get('/', (req, res) => {
-    res.json('VideoLoot - Online Media Downloader')
-})
+    res.json('VideoLoot - Online Media Downloader');
+});
 
 app.get("/ytdl", async (req, res) => {
     try {
@@ -117,9 +129,6 @@ app.get('/instadl', async (req, res) => {
         return res.status(500).json({ error: "Internal Server Error" });
     }
 });
-
-
-
 
 app.listen(port, () => {
     console.log(`Server is running on PORT: ${port}`);
