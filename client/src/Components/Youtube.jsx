@@ -9,6 +9,7 @@ function Youtube() {
   const [fetchUrl, setFetchUrl] = useState(null);
   const [progress, setProgress] = useState(0);
   const [message, setMessage] = useState("");
+  const [shouldRefetch, setShouldRefetch] = useState(false);
 
   const isValidUrl = (url) => {
     const regex =
@@ -21,7 +22,7 @@ function Youtube() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `https://video-loot.vercel.app/ytdl?url=${fetchUrl}`,
+          `https://video-loot-api.onrender.com/ytdl?url=${fetchUrl}`,
         );
         return response.data;
       } catch (err) {
@@ -31,6 +32,8 @@ function Youtube() {
     },
     enabled: !!fetchUrl && isValidUrl(fetchUrl),
     staleTime: Infinity,
+    refetchInterval: shouldRefetch ? 3000 : false, // Throttle with 3-second intervals
+    onSuccess: () => setShouldRefetch(false),
   });
 
   const fetchVideo = () => {
@@ -42,6 +45,7 @@ function Youtube() {
     if (isValidUrl(inputUrl)) {
       setFetchUrl(inputUrl);
       setInputUrl("");
+      setShouldRefetch(true); // Allow refetching
     } else {
       setMessage("Invalid YouTube URL ❌");
     }

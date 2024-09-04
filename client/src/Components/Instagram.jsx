@@ -23,7 +23,7 @@ function Instagram() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `https://video-loot-api.vercel.app/instadl?url=${fetchUrl}`,
+          `https://video-loot-api.onrender.com/instadl?url=${fetchUrl}`,
         );
         return response.data;
       } catch (err) {
