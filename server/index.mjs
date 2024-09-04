@@ -1,12 +1,15 @@
-const express = require('express');
-const ytdl = require('@distube/ytdl-core');
-const { ndown } = require("nayan-media-downloader");
-const cors = require('cors');
-require("dotenv").config();
-const axios = require('axios');
-const { filterUniqueImages, filterFormats } = require('./helperFns');
-const rateLimit = require('express-rate-limit');
-const pRetry = require('p-retry');
+import express from 'express';
+import ytdl from '@distube/ytdl-core';
+import pkg from 'nayan-media-downloader';
+const { ndown } = pkg;
+import cors from 'cors';
+import dotenv from 'dotenv';
+import axios from 'axios';
+import { filterUniqueImages, filterFormats } from './helperFns.mjs'; // Note the .js extension
+import rateLimit from 'express-rate-limit';
+import pRetry from 'p-retry';
+
+dotenv.config();
 
 const port = process.env.PORT || 4000;
 const app = express();

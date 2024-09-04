@@ -1,4 +1,4 @@
-function filterUniqueImages(images) {
+export function filterUniqueImages(images) {
     const seenThumbnails = new Map();
 
     // Track the latest URL for each thumbnail
@@ -14,7 +14,7 @@ function filterUniqueImages(images) {
         url
     }));
 }
-const filterFormats = (formats) => {
+export const filterFormats = (formats) => {
     return formats
         .filter(format => format.mimeType && format.mimeType.startsWith("video/") && format.audioQuality) // Ensure both video and audio are present
         .map(format => ({
@@ -23,4 +23,4 @@ const filterFormats = (formats) => {
             mimeType: format.mimeType || "Unknown"
         }));
 };
-module.exports = { filterUniqueImages, filterFormats };
+// module.exports = { filterUniqueImages, filterFormats };
