@@ -22,7 +22,7 @@ function Youtube() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `https://video-loot-api.onrender.com/ytdl?url=${fetchUrl}`,
+          `http://localhost:4000/ytdl?url=${fetchUrl}`,
         );
         return response.data;
       } catch (err) {
