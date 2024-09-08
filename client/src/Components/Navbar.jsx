@@ -1,28 +1,43 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { links } from "../assets/links";
 import { NavLink } from "react-router-dom";
 import { IoMenu, IoClose } from "react-icons/io5";
 
 function Navbar() {
   const [openNav, setOpenNav] = useState(false);
+  const navRef = useRef(null); // Reference for the navbar
 
+  // Close the navbar when the window resizes
   const handleWindowResize = () =>
     window.innerWidth >= 960 && setOpenNav(false);
 
+  // Close the navbar if clicked outside
+  const handleClickOutside = (event) => {
+    if (navRef.current && !navRef.current.contains(event.target)) {
+      setOpenNav(false);
+    }
+  };
+
   useEffect(() => {
     window.addEventListener("resize", handleWindowResize);
+    document.addEventListener("mousedown", handleClickOutside); // Listen for clicks outside
 
     return () => {
       window.removeEventListener("resize", handleWindowResize);
+      document.removeEventListener("mousedown", handleClickOutside); // Cleanup event listener
     };
   }, []);
+
   return (
     <>
-      <nav className="rounded-xl px-6 py-3 shadow-lg lg:mx-24">
+      <nav
+        className="bg-noir text-ivory rounded px-6 py-3 shadow-lg lg:mx-24"
+        ref={navRef}
+      >
         <div className="flex items-center justify-between">
           <NavLink
             to="/"
-            className="mr-4 cursor-pointer bg-gradient-to-br from-[#020024] from-10% via-[#090979] via-30% to-[#00d4ff] to-100% bg-clip-text py-1.5 font-pacifico text-xl font-bold text-transparent"
+            className="mr-4 cursor-pointer py-1.5 font-pacifico text-xl font-bold"
           >
             Video Loot
           </NavLink>
@@ -33,8 +48,8 @@ function Navbar() {
                   <NavLink
                     to={item.path}
                     className={({ isActive }) =>
-                      `flex items-center font-bold transition-all hover:bg-gradient-to-br hover:from-[#020024] hover:from-10% hover:via-[#090979] hover:via-30% hover:to-[#00d4ff] hover:to-100% hover:bg-clip-text hover:text-transparent ${
-                        isActive ? "lg:border-b-2 lg:border-black" : ""
+                      `hover:text-sage pb-1 font-sans tracking-wider transition-all${
+                        isActive ? "lg:border-ivory lg:border-b-2" : ""
                       } `
                     }
                   >
@@ -61,7 +76,8 @@ function Navbar() {
               <li key={index} className="p-1">
                 <NavLink
                   to={item.path}
-                  className="flex items-center font-bold transition-all hover:bg-gradient-to-br hover:from-[#020024] hover:from-10% hover:via-[#090979] hover:via-30% hover:to-[#00d4ff] hover:to-100% hover:bg-clip-text hover:text-transparent"
+                  className="hover:text-sage font-sans tracking-wider transition-all"
+                  onClick={() => setOpenNav(false)}
                 >
                   {item.name}
                 </NavLink>

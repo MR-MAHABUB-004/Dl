@@ -5,9 +5,10 @@ import Marquee from "react-fast-marquee";
 import ProgressBar from "./ProgressBar";
 import { FaPlayCircle } from "react-icons/fa";
 import VideoModal from "./VideoModal";
+import ximage from "../assets/ximage.jpeg";
 import { apiUrl } from "../config";
 
-function Instagram() {
+function TwitterX() {
   const [inputUrl, setInputUrl] = useState("");
   const [fetchUrl, setFetchUrl] = useState(null);
   const [message, setMessage] = useState("");
@@ -17,19 +18,18 @@ function Instagram() {
 
   // Function to validate Instagram URL
   const isValidUrl = (url) => {
-    const regex =
-      /^(https?:\/\/)?(www\.)?(instagram\.com\/(p|reel|stories|tv|s|explore|direct)\/).+$/;
+    const regex = /^(https?:\/\/)?(www\.|m\.)?(twitter|x)\.com\/.+$/;
     return regex.test(url);
   };
 
   // Query to fetch Instagram media using TanStack Query
-  const { data, isLoading, isFetching, refetch } = useQuery({
-    queryKey: ["instaMedia", fetchUrl],
+  const { data, isLoading, isFetching } = useQuery({
+    queryKey: ["Xmedia", fetchUrl],
     queryFn: async () => {
       try {
-        const response = await axios.get(`${apiUrl}/instadl?url=${fetchUrl}`);
+        const response = await axios.get(`${apiUrl}/xdl?url=${fetchUrl}`);
         // const response = await axios.get(
-        //   `http://localhost:4000/instadl?url=${fetchUrl}`,
+        //   `http://localhost:4000/xdl?url=${fetchUrl}`,
         // );
         return response.data;
       } catch (err) {
@@ -132,12 +132,12 @@ function Instagram() {
           gradientColor="#E4E4DE"
           speed={15}
         >
-          ⚠️ Note: Only public profiles supported.
+          ⚠️ Note: Only Twitter (X) videos can be downloaded.
         </Marquee>
       </div>
       <div className="my-12">
         <h1 className="text-noir font-nunito text-xl font-bold xs:text-2xl sm:text-4xl">
-          Instagram Content Downloader
+          Twitter(X) Video Downloader
         </h1>
       </div>
       <div className="relative mb-12 flex items-center justify-center shadow-md">
@@ -145,7 +145,7 @@ function Instagram() {
           type="text"
           value={inputUrl}
           onChange={(e) => setInputUrl(e.target.value)}
-          placeholder="Paste Instagram URL"
+          placeholder="Paste Twitter(X) URL"
           className="bg-ivory placeholder:text-noir w-[11rem] border-2 border-gray-500 px-4 py-2 placeholder:text-sm focus:shadow-lg xs:w-[16rem] sm:w-[18rem] md:w-[22rem]"
         />
         <button
@@ -204,7 +204,7 @@ function Instagram() {
                         onClick={() => setModalOpen((prev) => !prev)}
                       >
                         <img
-                          src={item.thumbnail}
+                          src={ximage}
                           alt={`image-${index}`}
                           className="h-auto max-h-[300px] w-full rounded-lg object-cover shadow-md"
                         />
@@ -228,6 +228,9 @@ function Instagram() {
                         className="bg-ivory text-moss mt-4 cursor-pointer rounded-lg border-2 border-black px-4 py-2 font-bold tracking-wide shadow-md"
                       >
                         Download
+                        <span className="m-4 text-center">
+                          {item.resolution}
+                        </span>
                       </button>
                     </div>
                     <VideoModal
@@ -250,4 +253,4 @@ function Instagram() {
   );
 }
 
-export default Instagram;
+export default TwitterX;

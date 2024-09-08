@@ -10,8 +10,10 @@ import App from "./App.jsx";
 import "./index.css";
 import Youtube from "./Components/Youtube.jsx";
 import Instagram from "./Components/Instagram.jsx";
+import Facebook from "./Components/Facebook.jsx";
 import Layout from "./Components/Layout.jsx";
 import Home from "./Components/Home.jsx";
+import TwitterX from "./Components/TwitterX.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -19,6 +21,8 @@ const router = createBrowserRouter(
       <Route index element={<Home />} />{" "}
       <Route path="youtube" element={<Youtube />} />
       <Route path="instagram" element={<Instagram />} />
+      <Route path="facebook" element={<Facebook />} />
+      <Route path="twitterX" element={<TwitterX />} />
       <Route path="*" element={<Home />} />{" "}
     </Route>,
   ),

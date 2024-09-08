@@ -1,15 +1,18 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import ProgressBar from "./ProgressBar";
+import { FaPlayCircle } from "react-icons/fa";
+import VideoModal from "./VideoModal";
+import { apiUrl } from "../config";
 
 function Youtube() {
   const [inputUrl, setInputUrl] = useState("");
-  const [selectedFormat, setSelectedFormat] = useState(null);
   const [fetchUrl, setFetchUrl] = useState(null);
   const [progress, setProgress] = useState(0);
   const [message, setMessage] = useState("");
-  const [shouldRefetch, setShouldRefetch] = useState(false);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const isValidUrl = (url) => {
     const regex =
@@ -17,145 +20,186 @@ function Youtube() {
     return regex.test(url);
   };
 
-  const { data, error, isLoading } = useQuery({
-    queryKey: ["formats", fetchUrl],
+  const { data, isLoading, isFetching } = useQuery({
+    queryKey: ["YoutubeMedia", fetchUrl],
     queryFn: async () => {
       try {
-        const response = await axios.get(
-          `https://video-loot-api.onrender.com/ytdl?url=${fetchUrl}`,
-        );
+        const response = await axios.get(`${apiUrl}/ytdl?url=${fetchUrl}`);
+        // const response = await axios.get(
+        //   `http://localhost:4000/ytdl?url=${fetchUrl}`,
+        // );
         return response.data;
       } catch (err) {
-        console.error("Error fetching formats:", err);
-        throw err;
+        if (err.response.status === 403) {
+          setMessage(err.response.data.message);
+        } else {
+          throw err;
+        }
       }
     },
     enabled: !!fetchUrl && isValidUrl(fetchUrl),
     staleTime: Infinity,
-    refetchInterval: shouldRefetch ? 3000 : false, // Throttle with 3-second intervals
-    onSuccess: () => setShouldRefetch(false),
+    onSuccess: (data) => {
+      // Handle success
+      if (data.message) {
+        setMessage(data.message);
+      } else {
+        setMessage(""); // Clear message on successful fetch
+      }
+    },
+    onSettled: () => {
+      // Clear the message on successful fetch or error
+      if (!isLoading && !isFetching) {
+        setMessage("");
+      }
+    },
   });
 
   const fetchVideo = () => {
-    setMessage("");
+    setMessage(""); // Clear message before fetching new data
     if (!inputUrl) {
       setMessage("URL Not Specified.");
       return;
     }
     if (isValidUrl(inputUrl)) {
-      setFetchUrl(inputUrl);
-      setInputUrl("");
-      setShouldRefetch(true); // Allow refetching
+      setFetchUrl(inputUrl); // Set URL to fetch
+      setInputUrl(""); // Clear the input field
     } else {
       setMessage("Invalid YouTube URL ❌");
     }
   };
+  console.log(data);
 
-  const handleDownload = async (url) => {
+  const handleDownload = async (url, contentType, fileExtension) => {
     try {
+      if (!url) {
+        throw new Error("Invalid URL");
+      }
+      setIsDownloading(true);
       setProgress(0); // Reset progress
       const response = await axios({
-        url: url,
+        // url: `http://localhost:4000/proxy?url=${encodeURIComponent(url)}`,
+        url: `${apiUrl}/proxy?url=${encodeURIComponent(url)}`,
         method: "GET",
         responseType: "blob",
         onDownloadProgress: (event) => {
           const percentage = Math.round((event.loaded * 100) / event.total);
-          setProgress(percentage);
+          setProgress((prev) => {
+            return prev < percentage ? percentage : prev;
+          });
         },
       });
 
-      const downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
+      const downloadUrl = window.URL.createObjectURL(
+        new Blob([response.data], { type: contentType }),
+      );
       const link = document.createElement("a");
       link.href = downloadUrl;
-      link.setAttribute("download", "video.mp4");
+      link.setAttribute("download", `file.${fileExtension}`);
       document.body.appendChild(link);
       link.click();
       link.remove();
 
       setProgress(100);
-      setTimeout(() => setProgress(0), 2000);
+      setTimeout(() => {
+        setProgress(0);
+        setIsDownloading(false);
+      }, 2000);
     } catch (error) {
       console.error("Error during download:", error);
+      setIsDownloading(false);
     }
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-center">
-      <div className="my-12">
-        <h1 className="text-xl font-bold xs:text-2xl sm:text-3xl">
-          YouTube Video Downloader
-        </h1>
-      </div>
-      <div className="relative mb-12 flex items-center justify-center shadow-md">
-        <input
-          type="text"
-          value={inputUrl}
-          onChange={(e) => setInputUrl(e.target.value)}
-          placeholder="Paste Your YouTube URL Here"
-          className="w-[12rem] border-2 border-gray-500 px-4 py-2 placeholder:text-sm focus:shadow-lg xs:w-[16rem] sm:w-[18rem] md:w-[22rem]"
-        />
-        <button
-          onClick={fetchVideo}
-          className="border-2 border-l-0 border-gray-500 px-4 py-2"
-        >
-          Get Video
-        </button>
-      </div>
-      {message && <div className="mb-4 font-bold text-red-500">{message}</div>}
-
-      {isLoading && (
-        <div className="loader flex aspect-square w-8 animate-spin items-center justify-center rounded-full border-t-2 border-gray-500 bg-gray-300 text-yellow-700"></div>
-      )}
-      {error && (
-        <p className="mb-4 font-bold text-red-500">
-          Error fetching formats: {error.message}
-        </p>
-      )}
-
-      {data && (
-        <iframe
-          className="h-[157px] w-[280px] rounded-md xs:h-[180px] xs:w-[320px] sm:h-[225px] sm:w-[400px] md:h-[285px] md:w-[500px]"
-          src={`${data.url}`}
-          title="video"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        />
-      )}
-
-      <div className="my-12 flex flex-col items-center justify-center gap-8">
-        {data?.formats?.length > 0 && (
-          <div className="relative w-full max-w-xs">
-            <select
-              id="video-quality"
-              className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-              onChange={(e) => setSelectedFormat(e.target.value)}
-            >
-              <option value="Select Quality">Select Quality</option>
-              {data.formats.map((format, index) => (
-                <option
-                  key={index}
-                  value={format.url}
-                  className="text-gray-700"
-                >
-                  {format.qualityLabel} - {format.mimeType.split(";")[0]}
-                </option>
-              ))}
-            </select>
+    <>
+      <div className="relative flex flex-col items-center justify-center">
+        <div className="my-12">
+          <h1 className="text-noir font-nunito text-xl font-bold xs:text-2xl sm:text-4xl">
+            YouTube Video Downloader
+          </h1>
+        </div>
+        <div className="relative mb-12 flex items-center justify-center shadow-md">
+          <input
+            type="text"
+            value={inputUrl}
+            onChange={(e) => setInputUrl(e.target.value)}
+            placeholder="Paste Your YouTube URL Here"
+            className="bg-ivory placeholder:text-noir w-[12rem] border-2 border-gray-500 px-4 py-2 placeholder:text-sm focus:shadow-lg xs:w-[16rem] sm:w-[18rem] md:w-[22rem]"
+          />
+          <button
+            onClick={fetchVideo}
+            className="bg-sage border-2 border-l-0 border-gray-500 px-4 py-2"
+          >
+            Get Video
+          </button>
+        </div>
+        {message && (
+          <div className="mb-4 flex items-center justify-center p-8 text-center font-bold text-red-500">
+            <p> {message}</p>
           </div>
         )}
-        <div>
-          {selectedFormat && (
-            <button
-              onClick={() => handleDownload(selectedFormat)}
-              className="download-btn"
-            >
-              Download
-            </button>
-          )}
-        </div>
-      </div>
 
-      {progress > 0 && <ProgressBar progress={progress} />}
-    </div>
+        {isLoading && (
+          <div className="loader flex aspect-square w-8 animate-spin items-center justify-center rounded-full border-t-2 border-gray-500 bg-gray-300 text-yellow-700"></div>
+        )}
+
+        <div>
+          {data &&
+            data.map((item, index) => {
+              return (
+                <div
+                  key={index}
+                  className="bg-sage mx-auto max-w-md overflow-hidden rounded-xl xs:shadow-lg md:max-w-xl"
+                >
+                  <div className="flex flex-col items-center justify-center gap-4 p-4 md:flex-row">
+                    <div
+                      className="relative flex flex-shrink-0 items-center justify-center shadow-md md:w-1/3"
+                      onClick={() => setModalOpen((prev) => !prev)}
+                    >
+                      <img
+                        src={item.thumbnail}
+                        alt={item.title}
+                        className="h-48 w-full rounded-lg object-cover md:h-full md:object-contain"
+                      />
+                      <span className="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]">
+                        {
+                          <FaPlayCircle className="text-[2.5rem] text-white opacity-60" />
+                        }
+                      </span>
+                    </div>
+                    <VideoModal
+                      isOpen={isModalOpen}
+                      onClose={() => setModalOpen((prev) => !prev)}
+                      videoUrl={item.video}
+                    />
+                    <div className="flex flex-col items-center gap-2 p-4 md:w-2/3 md:items-start">
+                      <p className="text-noir font-nunito text-center text-lg font-bold md:text-left">
+                        {item.title}
+                      </p>
+                      <button
+                        className="bg-ivory text-moss mt-4 cursor-pointer rounded-lg border-2 border-black px-4 py-2 font-bold tracking-wide shadow-md"
+                        onClick={() =>
+                          handleDownload(
+                            item.video,
+                            item.contentType,
+                            item.fileExtension,
+                          )
+                        }
+                        disabled={isDownloading}
+                      >
+                        Download
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+        </div>
+
+        {progress > 0 && <ProgressBar progress={progress} />}
+      </div>
+    </>
   );
 }
 

@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-.download-btn {
-    @apply mt-4 cursor-pointer rounded-lg border-2 border-gray-300 bg-gradient-to-br from-[#020024] from-10% via-[#090979] via-30% to-[#00d4ff] to-100% bg-clip-text px-4 py-2 font-bold tracking-wide text-transparent transition-all duration-300 ease-in-out hover:z-10 hover:shadow-md active:scale-95 active:bg-gradient-to-br active:from-[#030036] active:via-[#0a0f4f] active:to-[#0095ff] active:shadow-inner;
-}
+/* .download-btn {
+    @apply bg-ivory text-moss mt-4 cursor-pointer rounded-lg border-2 border-black px-4 py-2 font-bold tracking-wide shadow-md;
+
+} */

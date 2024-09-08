@@ -1,8 +1,6 @@
-import React from "react";
-
 const ProgressBar = ({ progress }) => {
   return (
-    <div className="mt-6 w-full max-w-xs">
+    <div className="mt-8 w-full max-w-xs">
       <div className="relative h-2 w-full rounded-full bg-gray-200">
         <div
           className="h-2 rounded-full bg-gradient-to-r from-blue-300 via-blue-400 to-blue-500"

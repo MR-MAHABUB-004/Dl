@@ -1,10 +1,12 @@
 const express = require('express');
-const ytdl = require('@distube/ytdl-core');
 const { ndown } = require("nayan-media-downloader");
+const { ytdown } = require("nayan-media-downloader");
+const { twitterdown } = require("nayan-media-downloader");
+const getThumbnail = require("./ytThumbnail");
 const cors = require('cors');
-require("dotenv").config();
 const axios = require('axios');
-const { filterUniqueImages, filterFormats } = require('./helperFns');
+const { filterUniqueImages, processMediaData, getFileType } = require('./utils');
+require("dotenv").config();
 
 const port = process.env.PORT || 4000;
 const app = express();
@@ -22,114 +24,128 @@ app.use(cors({
             callback(new Error('Not allowed by CORS'));
         }
     },
-    credentials: true // Allow credentials
+    credentials: true
 }));
 
+
+
+// Handle errors and responses
+const handleError = (res, statusCode, message) => res.status(statusCode).json({ message: message });
+
+// Routes
 app.get('/', (req, res) => {
     res.json('VideoLoot - Online Media Downloader');
 });
 
-app.get("/ytdl", async (req, res) => {
+app.get('/proxy', async (req, res) => {
+    const videoUrl = req.query.url;
     try {
-        const url = req.query.url;
-        if (!url) {
-            return res.status(400).json({ error: "URL parameter is required" });
-        }
+        const response = await axios({
+            url: videoUrl,
+            method: 'GET',
+            responseType: 'stream',
+        });
+        res.set('Content-Type', response.headers['content-type']);
+        res.set('Content-Length', response.headers['content-length']);
+        response.data.pipe(res);
+    } catch (err) {
+        handleError(res, 500, 'Error fetching video');
+    }
+});
 
-        const videoId = await ytdl.getURLVideoID(url);
-        const metaInfo = await ytdl.getInfo(url);
+app.get('/ytdl', async (req, res) => {
+    const url = req.query.url;
+    if (!url) return handleError(res, 400, "URL parameter is required");
 
-        if (!metaInfo || !metaInfo.formats) {
-            throw new Error("Failed to retrieve video formats");
-        }
+    try {
+        const info = await ytdown(url);
+        if (!info.status) return handleError(res, 403, "Sorry, we couldn't find the video you're looking for.");
 
-        const data = {
-            url: `https://www.youtube.com/embed/${videoId}`,
-            formats: filterFormats(metaInfo.formats) // Limit data here
-        };
+        const { contentType, fileExtension } = await getFileType(info.data.video);
+        const thumbnail = getThumbnail(url, 'mq');
+        const responseData = [{
+            contentType,
+            fileExtension,
+            thumbnail,
+            title: `${info.data.title.slice(0, 30)}...`,
+            video: info.data.video,
+            video_hd: info.data.video_hd,
+            audio: info.data.audio
+        }];
 
-        return res.json(data); // Send the filtered data
+        return res.json(responseData);
     } catch (error) {
         console.error("Error fetching video info:", error);
-        return res.status(500).json({ error: "Internal Server Error" });
+        handleError(res, 500, "Internal Server Error");
     }
 });
 
 app.get('/instadl', async (req, res) => {
+    const url = req.query.url;
+    if (!url) return handleError(res, 400, "URL parameter is required");
+
     try {
-        const url = req.query.url;
-
-        if (!url) {
-            return res.status(400).json({ error: "URL parameter is required" });
-        }
-
-        // Get the media information using ndown
         const info = await ndown(url);
-
-        // Check if the status indicates a personal page
-        if (info.status === false) {
-            return res.status(403).json({ message: "Unfortunately, we cannot download videos from a user's personal pages." });
-        }
+        if (!info.status) return handleError(res, 403, "Unfortunately, We cannot download videos from personal pages.");
 
         const data = filterUniqueImages(info.data);
-
         if (data && data.length > 0) {
-            // Process each media item
-            const processedData = await Promise.all(data.map(async (item) => {
-                const mediaUrl = item.url;
-                let contentType;
-                let fileExtension = "";
-
-                try {
-                    const headResponse = await axios({
-                        url: mediaUrl,
-                        method: "HEAD",
-                    });
-                    contentType = headResponse.headers["content-type"];
-                } catch (headError) {
-                    console.warn("HEAD request failed, defaulting to GET request.");
-                    contentType = null;
-                }
-
-                // Determine the content type and file extension
-                if (contentType) {
-                    if (contentType.startsWith("image/")) {
-                        fileExtension = contentType.split("/")[1]; // e.g., 'jpeg', 'png'
-                    } else if (contentType.startsWith("video/")) {
-                        fileExtension = contentType.split("/")[1]; // e.g., 'mp4', 'webm'
-                    } else if (contentType === "application/octet-stream") {
-                        // Handle octet-stream by assuming it's a video file
-                        contentType = "video/mp4";
-                        fileExtension = "mp4";
-                    } else {
-                        console.warn("Unrecognized content type:", contentType);
-                    }
-                } else {
-                    // If contentType is null, assume it's a video or perform more checks
-                    console.warn("No content type found, defaulting to video.");
-                    contentType = "video/mp4";
-                    fileExtension = "mp4";
-                }
-
-                return {
-                    thumbnail: item.thumbnail,
-                    url: mediaUrl,
-                    contentType: contentType,
-                    fileExtension: fileExtension,
-                };
-            }));
-
-            // Send the processed data back to the client
+            const processedData = await processMediaData(data);
             return res.json(processedData);
         } else {
-            return res.status(404).json({ error: "No media found" });
+            return handleError(res, 404, "No media found");
         }
     } catch (error) {
-        console.error("Error fetching video info:", error);
-        return res.status(500).json({ error: "Internal Server Error" });
+        console.error("Error fetching media info:", error);
+        handleError(res, 500, "Internal Server Error");
     }
 });
 
+app.get('/fbdl', async (req, res) => {
+    const url = req.query.url;
+    if (!url) return handleError(res, 400, "URL parameter is required");
+
+    try {
+        const info = await ndown(url);
+        if (!info.status) return handleError(res, 403, "Sorry, we couldn't find the media you're looking for.");
+
+        if (info.data && info.data.length > 0) {
+            const processedData = await processMediaData(info.data);
+            return res.json(processedData);
+        } else {
+            return handleError(res, 404, "No media found");
+        }
+    } catch (error) {
+        console.error("Error processing request:", error);
+        handleError(res, 500, "Internal Server Error");
+    }
+});
+
+app.get('/xdl', async (req, res) => {
+    const url = req.query.url;
+    if (!url) return handleError(res, 400, "URL parameter is required");
+
+    try {
+        const info = await twitterdown(url);
+
+        const dataStatus = Object.values(info.data)[0]
+
+        if (dataStatus === undefined) return handleError(res, 403, "Sorry, we couldn't find the media you're looking for.");
+        const data = Object.entries(info.data).map(([resolution, url]) => ({ resolution, url }))
+
+        if (data && data.length > 0) {
+            const processedData = await processMediaData(data);
+            return res.json(processedData);
+        } else {
+            return handleError(res, 404, "No media found");
+        }
+    } catch (error) {
+        console.error("Error processing request:", error);
+        handleError(res, 500, "Internal Server Error");
+    }
+
+
+});
 app.listen(port, () => {
     console.log(`Server is running on PORT: ${port}`);
 });
