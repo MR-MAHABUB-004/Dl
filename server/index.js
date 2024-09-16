@@ -146,13 +146,12 @@ app.get('/xdl', async (req, res) => {
 
 
 });
+module.exports = app;
 
+// Start the server for local development
 if (process.env.NODE_ENV !== 'production') {
     const port = process.env.PORT || 4000;
     app.listen(port, () => {
         console.log(`Server is running on PORT: ${port}`);
     });
-} else {
-    // In production, Vercel will handle the server lifecycle
-    module.exports = app;
 }
