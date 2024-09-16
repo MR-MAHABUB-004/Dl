@@ -39,7 +39,6 @@ export default function VideoModal({ isOpen, onClose, videoUrl }) {
             ref={playerRef}
             src={videoUrl}
             controls
-            controlsList="nodownload"
             className="absolute left-0 top-0 h-full w-full rounded-lg"
           ></video>
         </div>

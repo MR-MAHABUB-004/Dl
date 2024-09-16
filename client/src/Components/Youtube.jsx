@@ -68,7 +68,6 @@ function Youtube() {
       setMessage("Invalid YouTube URL ❌");
     }
   };
-  console.log(data);
 
   const handleDownload = async (url, contentType, fileExtension) => {
     try {
@@ -115,7 +114,7 @@ function Youtube() {
     <>
       <div className="relative flex flex-col items-center justify-center">
         <div className="my-12">
-          <h1 className="text-noir font-nunito text-xl font-bold xs:text-2xl sm:text-4xl">
+          <h1 className="font-nunito text-xl font-bold text-noir xs:text-2xl sm:text-4xl">
             YouTube Video Downloader
           </h1>
         </div>
@@ -125,11 +124,11 @@ function Youtube() {
             value={inputUrl}
             onChange={(e) => setInputUrl(e.target.value)}
             placeholder="Paste Your YouTube URL Here"
-            className="bg-ivory placeholder:text-noir w-[12rem] border-2 border-gray-500 px-4 py-2 placeholder:text-sm focus:shadow-lg xs:w-[16rem] sm:w-[18rem] md:w-[22rem]"
+            className="w-[12rem] border-2 border-gray-500 bg-ivory px-4 py-2 placeholder:text-sm placeholder:text-noir focus:shadow-lg xs:w-[16rem] sm:w-[18rem] md:w-[22rem]"
           />
           <button
             onClick={fetchVideo}
-            className="bg-sage border-2 border-l-0 border-gray-500 px-4 py-2"
+            className="border-2 border-l-0 border-gray-500 bg-sage px-4 py-2"
           >
             Get Video
           </button>
@@ -150,7 +149,7 @@ function Youtube() {
               return (
                 <div
                   key={index}
-                  className="bg-sage mx-auto max-w-md overflow-hidden rounded-xl xs:shadow-lg md:max-w-xl"
+                  className="mx-auto max-w-md overflow-hidden rounded-xl bg-sage xs:shadow-lg md:max-w-xl"
                 >
                   <div className="flex flex-col items-center justify-center gap-4 p-4 md:flex-row">
                     <div
@@ -174,11 +173,11 @@ function Youtube() {
                       videoUrl={item.video}
                     />
                     <div className="flex flex-col items-center gap-2 p-4 md:w-2/3 md:items-start">
-                      <p className="text-noir font-nunito text-center text-lg font-bold md:text-left">
+                      <p className="text-center font-nunito text-lg font-bold text-noir md:text-left">
                         {item.title}
                       </p>
                       <button
-                        className="bg-ivory text-moss mt-4 cursor-pointer rounded-lg border-2 border-black px-4 py-2 font-bold tracking-wide shadow-md"
+                        className="mt-4 cursor-pointer rounded-lg border-2 border-black bg-ivory px-4 py-2 font-bold tracking-wide text-moss shadow-md"
                         onClick={() =>
                           handleDownload(
                             item.video,

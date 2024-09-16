@@ -125,7 +125,7 @@ function Facebook() {
     <div className="relative flex flex-col items-center justify-center">
       <div className="mt-4">
         <Marquee
-          className="text-noir rounded-md"
+          className="rounded-md text-noir"
           gradient="true"
           gradientWidth={50}
           gradientColor="#E4E4DE"
@@ -135,7 +135,7 @@ function Facebook() {
         </Marquee>
       </div>
       <div className="my-12">
-        <h1 className="text-noir font-nunito text-xl font-bold xs:text-2xl sm:text-4xl">
+        <h1 className="font-nunito text-xl font-bold text-noir xs:text-2xl sm:text-4xl">
           Facebook Content Downloader
         </h1>
       </div>
@@ -145,11 +145,11 @@ function Facebook() {
           value={inputUrl}
           onChange={(e) => setInputUrl(e.target.value)}
           placeholder="Paste Facebook URL"
-          className="bg-ivory placeholder:text-noir w-[11rem] border-2 border-gray-500 px-4 py-2 placeholder:text-sm focus:shadow-lg xs:w-[16rem] sm:w-[18rem] md:w-[22rem]"
+          className="w-[11rem] border-2 border-gray-500 bg-ivory px-4 py-2 placeholder:text-sm placeholder:text-noir focus:shadow-lg xs:w-[16rem] sm:w-[18rem] md:w-[22rem]"
         />
         <button
           onClick={fetchMedia}
-          className="bg-sage border-2 border-l-0 border-gray-500 px-4 py-2"
+          className="border-2 border-l-0 border-gray-500 bg-sage px-4 py-2"
         >
           Fetch Media
         </button>
@@ -190,7 +190,7 @@ function Facebook() {
                         )
                       }
                       disabled={isDownloading}
-                      className="bg-ivory text-moss mt-6 cursor-pointer rounded-lg border-2 border-black px-4 py-2 font-bold tracking-wide shadow-md"
+                      className="mt-6 cursor-pointer rounded-lg border-2 border-black bg-ivory px-4 py-2 font-bold tracking-wide text-moss shadow-md"
                     >
                       Download
                     </button>
@@ -224,7 +224,7 @@ function Facebook() {
                           )
                         }
                         disabled={isDownloading}
-                        className="bg-ivory text-moss mt-4 cursor-pointer rounded-lg border-2 border-black px-4 py-2 font-bold tracking-wide shadow-md"
+                        className="mt-4 cursor-pointer rounded-lg border-2 border-black bg-ivory px-4 py-2 font-bold tracking-wide text-moss shadow-md"
                       >
                         Download
                         <span className="m-4 text-center">
