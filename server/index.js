@@ -146,6 +146,13 @@ app.get('/xdl', async (req, res) => {
 
 
 });
-app.listen(port, () => {
-    console.log(`Server is running on PORT: ${port}`);
-});
+
+if (process.env.NODE_ENV !== 'production') {
+    const port = process.env.PORT || 4000;
+    app.listen(port, () => {
+        console.log(`Server is running on PORT: ${port}`);
+    });
+} else {
+    // In production, Vercel will handle the server lifecycle
+    module.exports = app;
+}

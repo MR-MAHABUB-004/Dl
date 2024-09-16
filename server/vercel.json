@@ -8,7 +8,7 @@
   ],
   "routes": [
     {
-      "src": "/(ytdl|xdl|instadl|fbdl)",
+      "src": "/(.*)",
       "dest": "/index.js"
     }
   ]
