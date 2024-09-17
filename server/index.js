@@ -44,11 +44,13 @@ app.get('/proxy', async (req, res) => {
             url: videoUrl,
             method: 'GET',
             responseType: 'stream',
+            timeout: 60000, // Increase timeout to 60 seconds
         });
         res.set('Content-Type', response.headers['content-type']);
         res.set('Content-Length', response.headers['content-length']);
         response.data.pipe(res);
     } catch (err) {
+        console.error("Error fetching video:", err.message); // Improved logging
         handleError(res, 500, 'Error fetching video');
     }
 });
