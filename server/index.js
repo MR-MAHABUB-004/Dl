@@ -5,6 +5,7 @@ const { twitterdown } = require("nayan-media-downloader");
 const getThumbnail = require("./ytThumbnail");
 const cors = require('cors');
 const axios = require('axios');
+const got = require('got');
 const { filterUniqueImages, processMediaData, getFileType } = require('./utils');
 require("dotenv").config();
 
@@ -40,17 +41,14 @@ app.get('/', (req, res) => {
 app.get('/proxy', async (req, res) => {
     const videoUrl = req.query.url;
     try {
-        const response = await axios({
-            url: videoUrl,
-            method: 'GET',
-            responseType: 'stream',
-            timeout: 60000, // Increase timeout to 60 seconds
+        const stream = got.stream(videoUrl, { timeout: 60000 });
+        stream.on('response', (response) => {
+            res.set('Content-Type', response.headers['content-type']);
+            res.set('Content-Length', response.headers['content-length']);
         });
-        res.set('Content-Type', response.headers['content-type']);
-        res.set('Content-Length', response.headers['content-length']);
-        response.data.pipe(res);
+        stream.pipe(res);
     } catch (err) {
-        console.error("Error fetching video:", err.message); // Improved logging
+        console.error("Error fetching video:", err.message);
         handleError(res, 500, 'Error fetching video');
     }
 });
