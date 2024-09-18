@@ -4,7 +4,6 @@ const { ytdown } = require("nayan-media-downloader");
 const { twitterdown } = require("nayan-media-downloader");
 const getThumbnail = require("./ytThumbnail");
 const cors = require('cors');
-const axios = require('axios');
 const got = require('got');
 const { filterUniqueImages, processMediaData, getFileType } = require('./utils');
 require("dotenv").config();

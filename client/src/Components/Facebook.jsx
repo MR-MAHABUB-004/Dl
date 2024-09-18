@@ -17,7 +17,8 @@ function Facebook() {
 
   // Function to validate Instagram URL
   const isValidUrl = (url) => {
-    const regex = /^(https?:\/\/)?(www\.|m\.)?facebook\.com(\/.*)?$/;
+    const regex =
+      /^(https?:\/\/)?(www\.|m\.|mobile\.)?(facebook\.com|fb\.com|fb\.watch)(\/.*)?$/;
     return regex.test(url);
   };
 
@@ -66,7 +67,7 @@ function Facebook() {
       setFetchUrl(inputUrl);
       setInputUrl("");
     } else {
-      setMessage("Invalid Instagram URL ❌");
+      setMessage("Invalid Facebook URL ❌");
     }
   };
 
@@ -144,6 +145,11 @@ function Facebook() {
           type="text"
           value={inputUrl}
           onChange={(e) => setInputUrl(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              fetchMedia();
+            }
+          }}
           placeholder="Paste Facebook URL"
           className="w-[11rem] border-2 border-gray-500 bg-ivory px-4 py-2 placeholder:text-sm placeholder:text-noir focus:shadow-lg xs:w-[16rem] sm:w-[18rem] md:w-[22rem]"
         />

@@ -123,6 +123,11 @@ function Youtube() {
             type="text"
             value={inputUrl}
             onChange={(e) => setInputUrl(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                fetchVideo();
+              }
+            }}
             placeholder="Paste Your YouTube URL Here"
             className="w-[12rem] border-2 border-gray-500 bg-ivory px-4 py-2 placeholder:text-sm placeholder:text-noir focus:shadow-lg xs:w-[16rem] sm:w-[18rem] md:w-[22rem]"
           />

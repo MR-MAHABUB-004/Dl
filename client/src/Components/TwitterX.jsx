@@ -5,7 +5,6 @@ import Marquee from "react-fast-marquee";
 import ProgressBar from "./ProgressBar";
 import { FaPlayCircle } from "react-icons/fa";
 import VideoModal from "./VideoModal";
-import ximage from "../assets/ximage.jpeg";
 import { apiUrl } from "../config";
 
 function TwitterX() {
@@ -145,6 +144,11 @@ function TwitterX() {
           type="text"
           value={inputUrl}
           onChange={(e) => setInputUrl(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              fetchMedia();
+            }
+          }}
           placeholder="Paste Twitter(X) URL"
           className="w-[11rem] border-2 border-gray-500 bg-ivory px-4 py-2 placeholder:text-sm placeholder:text-noir focus:shadow-lg xs:w-[16rem] sm:w-[18rem] md:w-[22rem]"
         />
@@ -203,15 +207,14 @@ function TwitterX() {
                         className="relative"
                         onClick={() => setModalOpen((prev) => !prev)}
                       >
-                        <img
-                          src={ximage}
-                          alt={`image-${index}`}
+                        <video
+                          src={item.url}
                           className="h-auto max-h-[300px] w-full rounded-lg object-cover shadow-md"
+                          muted
+                          controls={false}
                         />
                         <span className="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]">
-                          {
-                            <FaPlayCircle className="text-[2.5rem] text-white opacity-60" />
-                          }
+                          <FaPlayCircle className="text-[2.5rem] text-white opacity-60" />
                         </span>
                       </div>
                       <button
