@@ -28,9 +28,6 @@ function Instagram() {
     queryFn: async () => {
       try {
         const response = await axios.get(`${apiUrl}/instadl?url=${fetchUrl}`);
-        // const response = await axios.get(
-        //   `http://localhost:4000/instadl?url=${fetchUrl}`,
-        // );
         return response.data;
       } catch (err) {
         if (err.response.status === 403) {
@@ -77,6 +74,7 @@ function Instagram() {
     url,
     contentType,
     fileExtension,
+    fileName,
   ) => {
     try {
       // Initialize progress for this post
@@ -105,7 +103,7 @@ function Instagram() {
       // Create an anchor element and simulate a click to trigger the download
       const link = document.createElement("a");
       link.href = blobUrl;
-      link.setAttribute("download", `file.${fileExtension}`); // e.g., file.mp4, file.jpeg
+      link.setAttribute("download", `${fileName}.${fileExtension}`); // e.g., file.mp4, file.jpeg
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -193,6 +191,7 @@ function Instagram() {
                           item.url,
                           item.contentType,
                           item.fileExtension,
+                          item.fileName,
                         )
                       }
                       disabled={isDownloading}
@@ -226,6 +225,7 @@ function Instagram() {
                             item.url,
                             item.contentType,
                             item.fileExtension,
+                            item.fileName,
                           )
                         }
                         disabled={isDownloading}

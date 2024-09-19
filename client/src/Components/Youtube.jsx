@@ -25,9 +25,6 @@ function Youtube() {
     queryFn: async () => {
       try {
         const response = await axios.get(`${apiUrl}/ytdl?url=${fetchUrl}`);
-        // const response = await axios.get(
-        //   `http://localhost:4000/ytdl?url=${fetchUrl}`,
-        // );
         return response.data;
       } catch (err) {
         if (err.response.status === 403) {
@@ -69,7 +66,7 @@ function Youtube() {
     }
   };
 
-  const handleDownload = async (url, contentType, fileExtension) => {
+  const handleDownload = async (url, contentType, fileExtension, fileName) => {
     try {
       if (!url) {
         throw new Error("Invalid URL");
@@ -77,7 +74,6 @@ function Youtube() {
       setIsDownloading(true);
       setProgress(0); // Reset progress
       const response = await axios({
-        // url: `http://localhost:4000/proxy?url=${encodeURIComponent(url)}`,
         url: `${apiUrl}/proxy?url=${encodeURIComponent(url)}`,
         method: "GET",
         responseType: "blob",
@@ -94,7 +90,7 @@ function Youtube() {
       );
       const link = document.createElement("a");
       link.href = downloadUrl;
-      link.setAttribute("download", `file.${fileExtension}`);
+      link.setAttribute("download", `${fileName}.${fileExtension}`);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -188,6 +184,7 @@ function Youtube() {
                             item.video,
                             item.contentType,
                             item.fileExtension,
+                            item.fileName,
                           )
                         }
                         disabled={isDownloading}

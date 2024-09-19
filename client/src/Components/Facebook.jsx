@@ -77,6 +77,7 @@ function Facebook() {
     url,
     contentType,
     fileExtension,
+    fileName,
   ) => {
     try {
       // Initialize progress for this post
@@ -105,7 +106,7 @@ function Facebook() {
       // Create an anchor element and simulate a click to trigger the download
       const link = document.createElement("a");
       link.href = blobUrl;
-      link.setAttribute("download", `file.${fileExtension}`); // e.g., file.mp4, file.jpeg
+      link.setAttribute("download", `${fileName}.${fileExtension}`); // e.g., file.mp4, file.jpeg
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -193,6 +194,7 @@ function Facebook() {
                           item.url,
                           item.contentType,
                           item.fileExtension,
+                          item.fileName,
                         )
                       }
                       disabled={isDownloading}
@@ -227,6 +229,7 @@ function Facebook() {
                             item.url,
                             item.contentType,
                             item.fileExtension,
+                            item.fileName,
                           )
                         }
                         disabled={isDownloading}

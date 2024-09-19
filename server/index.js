@@ -5,7 +5,7 @@ const { twitterdown } = require("nayan-media-downloader");
 const getThumbnail = require("./ytThumbnail");
 const cors = require('cors');
 const got = require('got');
-const { filterUniqueImages, processMediaData, getFileType } = require('./utils');
+const { filterUniqueImages, processMediaData, getFileType, createUniqueFileName } = require('./utils');
 require("dotenv").config();
 
 const port = process.env.PORT || 4000;
@@ -62,9 +62,11 @@ app.get('/ytdl', async (req, res) => {
 
         const { contentType, fileExtension } = await getFileType(info.data.video);
         const thumbnail = getThumbnail(url, 'mq');
+        const fileName = createUniqueFileName()
         const responseData = [{
             contentType,
             fileExtension,
+            fileName,
             thumbnail,
             title: `${info.data.title.slice(0, 30)}...`,
             video: info.data.video,

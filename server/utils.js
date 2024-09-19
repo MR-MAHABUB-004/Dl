@@ -37,14 +37,19 @@ const getFileType = async (mediaUrl) => {
 const processMediaData = async (mediaItems) => {
     return Promise.all(mediaItems.map(async (item) => {
         const { contentType, fileExtension } = await getFileType(item.url);
+        const fileName = createUniqueFileName()
         return {
             thumbnail: item.thumbnail,
             url: item.url,
             contentType,
             fileExtension,
+            fileName,
             resolution: item.resolution || null
         };
     }));
 };
 
-module.exports = { filterUniqueImages, processMediaData, getFileType };
+const createUniqueFileName = () => {
+    return `VL_${Date.now()}_${Math.floor(Math.random() * 1000)}`
+}
+module.exports = { filterUniqueImages, processMediaData, getFileType, createUniqueFileName };
