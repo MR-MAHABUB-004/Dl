@@ -46,7 +46,7 @@
    - Navigate to the `client` folder and install dependencies:
 
      ```bash
-     cd ../client
+     cd client
      npm install
      ```
 
