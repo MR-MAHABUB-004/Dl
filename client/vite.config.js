@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
+import sitemap from 'vite-plugin-sitemap';
 
 const manifestForPlugIn = {
   registerType: 'prompt',
@@ -50,7 +51,8 @@ const manifestForPlugIn = {
 export default defineConfig({
   plugins: [
     react(),
-    VitePWA(manifestForPlugIn)
+    VitePWA(manifestForPlugIn),
+    sitemap({ hostname: 'https://videoloot.vercel.app/' })
   ],
   server: {
     proxy: {
