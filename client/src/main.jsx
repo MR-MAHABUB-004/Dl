@@ -8,31 +8,38 @@ import {
 } from "react-router-dom";
 import App from "./App.jsx";
 import "./index.css";
-import Youtube from "./Components/Youtube.jsx";
-import Instagram from "./Components/Instagram.jsx";
-import Facebook from "./Components/Facebook.jsx";
-import Layout from "./Components/Layout.jsx";
-import Home from "./Components/Home.jsx";
-import TwitterX from "./Components/TwitterX.jsx";
+import React, { Suspense } from "react";
 
+// Lazy load your components
+const Youtube = React.lazy(() => import("./Components/Youtube.jsx"));
+const Instagram = React.lazy(() => import("./Components/Instagram.jsx"));
+const Facebook = React.lazy(() => import("./Components/Facebook.jsx"));
+const Layout = React.lazy(() => import("./Components/Layout.jsx"));
+const Home = React.lazy(() => import("./Components/Home.jsx"));
+const TwitterX = React.lazy(() => import("./Components/TwitterX.jsx"));
+
+// Create your router with lazy-loaded components
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
-      <Route index element={<Home />} />{" "}
+      <Route index element={<Home />} />
       <Route path="youtube" element={<Youtube />} />
       <Route path="instagram" element={<Instagram />} />
       <Route path="facebook" element={<Facebook />} />
       <Route path="twitterX" element={<TwitterX />} />
-      <Route path="*" element={<Home />} />{" "}
+      <Route path="*" element={<Home />} />
     </Route>,
   ),
 );
 
 const queryClient = new QueryClient();
+
 createRoot(document.getElementById("root")).render(
   <QueryClientProvider client={queryClient}>
-    <RouterProvider router={router}>
-      <App />
-    </RouterProvider>
+    <Suspense fallback={<div>Loading...</div>}>
+      <RouterProvider router={router}>
+        <App />
+      </RouterProvider>
+    </Suspense>
   </QueryClientProvider>,
 );
