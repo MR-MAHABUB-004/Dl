@@ -31,7 +31,7 @@ function Navbar() {
   return (
     <>
       <nav
-        className="bg-noir text-ivory rounded px-6 py-3 shadow-lg lg:mx-24"
+        className="rounded bg-noir px-6 py-3 text-ivory shadow-lg lg:mx-24"
         ref={navRef}
       >
         <div className="flex items-center justify-between">
@@ -48,8 +48,8 @@ function Navbar() {
                   <NavLink
                     to={item.path}
                     className={({ isActive }) =>
-                      `hover:text-sage pb-1 font-sans tracking-wider transition-all${
-                        isActive ? "lg:border-ivory lg:border-b-2" : ""
+                      `pb-1 font-sans tracking-wider transition-all hover:text-sage ${
+                        isActive ? "lg:border-b-2 lg:border-ivory" : ""
                       } `
                     }
                   >
@@ -62,6 +62,7 @@ function Navbar() {
           <button
             className="p-2 lg:hidden"
             onClick={() => setOpenNav(!openNav)}
+            aria-label={openNav ? "Close menu" : "Open menu"}
           >
             {openNav ? (
               <IoClose className="text-2xl" />
@@ -76,7 +77,7 @@ function Navbar() {
               <li key={index} className="p-1">
                 <NavLink
                   to={item.path}
-                  className="hover:text-sage font-sans tracking-wider transition-all"
+                  className="font-sans tracking-wider transition-all hover:text-sage"
                   onClick={() => setOpenNav(false)}
                 >
                   {item.name}

@@ -10,9 +10,9 @@ export default function Home() {
           </h1>
         </div>
         <div className="mb-8">
-          <h3 className="my-4 text-center text-xl xs:text-2xl">
+          <h2 className="my-4 text-center text-xl xs:text-2xl">
             Supported Resources
-          </h3>
+          </h2>
           <div className="my-12 flex flex-wrap justify-center gap-4">
             {links.map((item, index) => {
               return (
@@ -27,48 +27,48 @@ export default function Home() {
               );
             })}
           </div>
-          <hr className="border-sage my-8 w-full border-t-2" />
+          <hr className="my-8 w-full border-t-2 border-sage" />
         </div>
         <div className="">
-          <h1 className="font-nunito text-center text-xl xs:text-3xl">
+          <h1 className="text-center font-nunito text-xl xs:text-3xl">
             How to downlaod with VideoLoot
           </h1>
           <div className="my-8 flex flex-col">
             <div className="mb-8">
-              <h1 className="font-nunito text-moss mb-4 text-center text-2xl font-bold">
+              <h1 className="mb-4 text-center font-nunito text-2xl font-bold text-moss">
                 Step 1:
               </h1>
-              <p className="font-nunito text-center lg:text-xl">
+              <p className="text-center font-nunito lg:text-xl">
                 Open the video you want to download and copy its link at the top
                 of the screen.
               </p>
             </div>
             <div className="mb-8">
-              <h1 className="font-nunito text-moss mb-4 text-center text-2xl font-bold">
+              <h1 className="mb-4 text-center font-nunito text-2xl font-bold text-moss">
                 Step 2:
               </h1>
-              <p className="font-nunito text-center lg:text-xl">
+              <p className="text-center font-nunito lg:text-xl">
                 Then go to our website and paste the link into the input field.
               </p>
             </div>
             <div className="mb-8">
-              <h1 className="font-nunito text-moss mb-4 text-center text-2xl font-bold">
+              <h1 className="mb-4 text-center font-nunito text-2xl font-bold text-moss">
                 Step 3:
               </h1>
-              <p className="font-nunito text-center lg:text-xl">
+              <p className="text-center font-nunito lg:text-xl">
                 click the "Fetch Media" button.
               </p>
             </div>
             <div className="mb-8">
-              <h1 className="font-nunito text-moss mb-4 text-center text-2xl font-bold">
+              <h1 className="mb-4 text-center font-nunito text-2xl font-bold text-moss">
                 Step 4:
               </h1>
-              <p className="font-nunito text-center lg:text-xl">
+              <p className="text-center font-nunito lg:text-xl">
                 Click the "Download" button to Download.
               </p>
             </div>
           </div>
-          <hr className="border-sage w-full border-t-2" />
+          <hr className="w-full border-t-2 border-sage" />
         </div>
       </div>
     </>
