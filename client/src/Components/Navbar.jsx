@@ -38,6 +38,7 @@ function Navbar() {
           <NavLink
             to="/"
             className="mr-4 cursor-pointer py-1.5 font-pacifico text-xl font-bold"
+            onClick={() => setOpenNav(false)}
           >
             Video Loot
           </NavLink>
@@ -71,7 +72,11 @@ function Navbar() {
             )}
           </button>
         </div>
-        <div className={`lg:hidden ${openNav ? "block" : "hidden"}`}>
+        <div
+          className={`transform transition-all duration-500 ease-in-out lg:hidden ${
+            openNav ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
+          } overflow-hidden`}
+        >
           <ul className="mt-2 flex flex-col gap-2">
             {links.map((item, index) => (
               <li key={index} className="p-1">

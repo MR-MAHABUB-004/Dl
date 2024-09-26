@@ -13,6 +13,26 @@
 
 > **Note**: Sometimes the actual media data may differ, meaning the downloaded content may not exactly match the displayed media, or the media may not be available at all.
 
+## Progressive Web App (PWA) Features
+
+Videoloot is now a **PWA**, meaning you can install it on your device for faster access, offline capabilities, and a native-like experience.
+
+### How to Install
+
+- **On Desktop**:
+  1. Open Videoloot in Chrome, Edge, or any PWA-supported browser.
+  2. Click the install button in the address bar or the "Add to Home Screen" option from the browser menu.
+- **On Mobile (Android)**:
+  1. Open Videoloot in your browser (Chrome, Edge, etc.).
+  2. Tap the three dots in the top-right corner and select "Add to Home Screen."
+  3. Follow the on-screen instructions to add the app to your home screen.
+- **On iOS (Safari)**:
+  1. Open Videoloot in Safari.
+  2. Tap the share icon at the bottom of the screen and select "Add to Home Screen."
+  3. Follow the instructions to install the app.
+
+Once installed, you can access Videoloot directly from your home screen or app drawer without needing to open a browser.
+
 ## Folder Structure
 
 - **client**: The frontend is built using Vite.

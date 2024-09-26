@@ -36,7 +36,13 @@ const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")).render(
   <QueryClientProvider client={queryClient}>
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="grid h-screen place-items-center">
+          <div className="loader flex aspect-square w-8 animate-spin items-center justify-center rounded-full border-t-2 border-gray-500 bg-gray-300 text-yellow-700"></div>
+        </div>
+      }
+    >
       <RouterProvider router={router}>
         <App />
       </RouterProvider>
