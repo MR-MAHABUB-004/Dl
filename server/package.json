@@ -25,7 +25,7 @@
     "express": "^4.19.2",
     "file-type": "^19.5.0",
     "got": "^11.8.3",
-    "nayan-media-downloader": "^2.4.8",
+    "nayan-video-downloader": "^0.0.2",
     "ytdl-core": "^4.11.5"
   },
   "devDependencies": {
