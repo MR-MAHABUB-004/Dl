@@ -1,7 +1,7 @@
 const express = require('express');
-const { ndown } = require("nayan-video-downloader");
-const { ytdown } = require("nayan-video-downloader");
-const { twitterdown } = require("nayan-video-downloader");
+const { ndown } = require("nayan-videos-downloader");
+const { ytdown } = require("nayan-videos-downloader");
+const { twitterdown } = require("nayan-videos-downloader");
 const getThumbnail = require("./ytThumbnail");
 const cors = require('cors');
 const got = require('got');
