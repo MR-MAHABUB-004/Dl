@@ -10,8 +10,8 @@ const manifestForPlugIn = {
   },
   includeAssests: ['favicon.ico', "apple-touch-icon.png", "masked-icon.svg"],
   manifest: {
-    name: "VideoLoot - Free Media Downloader",
-    short_name: "VideoLoot",
+    name: "mahabub-aldl",
+    short_name: "mahabub-dl",
     description: "Download videos and posts from various social media platforms.",
     icons: [{
       src: '/android-chrome-192x192.png',
@@ -52,7 +52,7 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA(manifestForPlugIn),
-    sitemap({ hostname: 'https://videoloot.vercel.app/' })
+    sitemap({ hostname: 'dl-khaki.vercel.app' })
   ],
   server: {
     proxy: {
