@@ -16,7 +16,7 @@ app.use(cors({
     origin: function (origin, callback) {
         const allowedOrigins = [
             'http://localhost:5173',
-            'https://videoloot.vercel.app'
+            'dl-khaki.vercel.app'
         ];
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
