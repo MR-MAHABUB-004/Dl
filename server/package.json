@@ -1,5 +1,5 @@
 {
-  "name": "VideoLoot-online-media-downloader",
+  "name": "mahabub-aldl",
   "version": "1.0.0",
   "description": "A nodejs server that helps for using downloading youtube videos using ytdl-core package.",
   "main": "index.js",
@@ -17,7 +17,7 @@
     "expressjs",
     "reactjs"
   ],
-  "author": "Jafeer Shaik",
+  "author": "mahabub",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
